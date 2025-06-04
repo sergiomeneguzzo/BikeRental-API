@@ -21,7 +21,7 @@ export const sendConfirmationEmail = async (email: string, userId: string) => {
     attachments: [
       {
         filename: 'LogoPW1.png',
-        //path: 'since2024.png',
+        path: 'RentBike.webp',
         cid: 'logo',
       },
     ],
@@ -121,7 +121,7 @@ export const sendConfirmationEmail = async (email: string, userId: string) => {
       <p>Se non hai richiesto questo account, puoi ignorare questa email.</p>
 
       <div class="footer">
-        <p>Grazie,<br />Il Team di Bike Rental</p>
+        <p>Grazie,<br />Il Team di Rent Bike</p>
       </div>
     </div>
   </body>

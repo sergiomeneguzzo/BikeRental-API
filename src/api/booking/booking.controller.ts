@@ -1,7 +1,11 @@
 import { Request, Response } from 'express';
 import { plainToInstance } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
-import { ConfirmReservationDto, CreateReservationDto } from './booking.dto';
+import {
+  ConfirmReservationDto,
+  CreateReservationDto,
+  UpdateReservationDto,
+} from './booking.dto';
 import { ReservationService } from './booking.service';
 
 const service = new ReservationService();
@@ -30,6 +34,7 @@ export class ReservationController {
       await validateOrReject(dto);
 
       const reqUser = (req as any).user;
+      console.log('user:', reqUser);
       if (!reqUser) {
         res.status(401).json({ error: 'Non autenticato' });
         return;
@@ -39,7 +44,7 @@ export class ReservationController {
         return;
       }
 
-      const updated = await service.confirm(dto, reqUser._id);
+      const updated = await service.confirm(dto, reqUser.id);
       res.json(updated);
     } catch (err: any) {
       res.status(400).json({ error: err.message || err });
@@ -64,6 +69,32 @@ export class ReservationController {
     }
   }
 
+  async update(req: Request, res: Response) {
+    try {
+      const dto = plainToInstance(UpdateReservationDto, req.body);
+      await validateOrReject(dto);
+
+      const reqUser = (req as any).user;
+      if (!reqUser) {
+        res.status(401).json({ error: 'Non autenticato' });
+        return;
+      }
+      if (!reqUser.isConfirmed) {
+        res.status(403).json({ error: 'Utente non confermato' });
+        return;
+      }
+
+      const updated = await service.update(
+        req.params.id,
+        dto,
+        reqUser.id.toString(),
+      );
+      res.json(updated);
+    } catch (err: any) {
+      res.status(400).json({ error: err.message || err });
+    }
+  }
+
   async cancel(req: Request, res: Response) {
     try {
       const reqUser = (req as any).user;
@@ -73,10 +104,14 @@ export class ReservationController {
       }
       if (!reqUser.isConfirmed) {
         res.status(403).json({ error: 'Utente non confermato' });
+        return;
       }
 
-      const deleted = await service.cancel(req.params.id, reqUser._id);
-      res.json(deleted);
+      const cancelled = await service.cancel(
+        req.params.id,
+        reqUser.id.toString(),
+      );
+      res.json(cancelled);
     } catch (err: any) {
       res.status(400).json({ error: err.message || err });
     }

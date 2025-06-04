@@ -2,7 +2,11 @@ import { Types } from 'mongoose';
 import { BikeModel } from '../bike/bike.model';
 import { LocationModel } from '../location/location.model';
 import { UserModel } from '../user/user.model';
-import { ConfirmReservationDto, CreateReservationDto } from './booking.dto';
+import {
+  ConfirmReservationDto,
+  CreateReservationDto,
+  UpdateReservationDto,
+} from './booking.dto';
 import { Reservation, ReservationStatus } from './booking.entity';
 import { ReservationModel } from './booking.model';
 import { sendConfirmationEmail } from '../services/email.service';
@@ -39,6 +43,9 @@ export class ReservationService {
       }
     }
 
+    const isDifferentLocation = dto.pickupLocation !== dto.dropoffLocation;
+    const computedExtraFee = isDifferentLocation ? 10 : 0;
+
     const newRes = await ReservationModel.create({
       userId: dto.userId ? new Types.ObjectId(dto.userId) : undefined,
       guestEmail: dto.userId ? undefined : dto.guestEmail,
@@ -47,32 +54,42 @@ export class ReservationService {
       dropoffDate: new Date(dto.dropoffDate),
       dropoffLocation: new Types.ObjectId(dto.dropoffLocation),
       items: dto.items.map((id) => new Types.ObjectId(id)),
-      extraLocationFee: dto.extraLocationFee ?? 0,
-      totalPrice: dto.totalPrice,
+      extraLocationFee: computedExtraFee,
+      totalPrice: dto.totalPrice + computedExtraFee,
       status,
       reminderSent: false,
       paymentMethod: dto.paymentMethod,
     });
 
-    if (status === ReservationStatus.CONFIRMED) {
-      await Promise.all(
-        dto.items.map((id) =>
-          BikeModel.findByIdAndUpdate(id, { status: 'rented' }),
-        ),
-      );
-      if (dto.userId) {
-        const user = await UserModel.findById(dto.userId);
-        if (user) {
-          await sendReservationConfirmation(
-            user.username!,
-            newRes.id.toString(),
-          );
-        }
+    await Promise.all(
+      dto.items.map((id) =>
+        BikeModel.findByIdAndUpdate(id, { status: 'rented' }),
+      ),
+    );
+
+    if (status === ReservationStatus.CONFIRMED && dto.userId) {
+      const user = await UserModel.findById(dto.userId);
+      if (user) {
+        await sendReservationConfirmation(user.username!, newRes.id.toString());
       }
     } else {
       if (dto.guestEmail) {
         await sendConfirmationEmail(dto.guestEmail, newRes._id.toString());
       }
+
+      setTimeout(async () => {
+        const resv = await ReservationModel.findById(newRes._id);
+        if (resv && resv.status === ReservationStatus.PENDING) {
+          resv.status = ReservationStatus.CANCELLED;
+          await resv.save();
+
+          await Promise.all(
+            resv.items.map((id) =>
+              BikeModel.findByIdAndUpdate(id, { status: 'available' }),
+            ),
+          );
+        }
+      }, 5 * 60 * 1000); // 5 minuti
     }
 
     return newRes.toObject();
@@ -109,6 +126,84 @@ export class ReservationService {
 
   async findByUser(userId: string): Promise<Reservation[]> {
     return await ReservationModel.find({ userId: new Types.ObjectId(userId) });
+  }
+
+  async update(
+    reservationId: string,
+    dto: UpdateReservationDto,
+    reqUserId: string,
+  ): Promise<Reservation> {
+    const resv = await ReservationModel.findById(reservationId);
+    if (!resv) throw new Error('Prenotazione non trovata');
+
+    if (!resv.userId || resv.userId.toString() !== reqUserId)
+      throw new Error('Accesso negato');
+
+    if (
+      ![ReservationStatus.PENDING, ReservationStatus.CONFIRMED].includes(
+        resv.status,
+      )
+    ) {
+      throw new Error('Prenotazione non modificabile in questo stato');
+    }
+
+    const now = new Date();
+    const twoDaysBefore = new Date(resv.pickupDate);
+    twoDaysBefore.setDate(twoDaysBefore.getDate() - 2);
+    if (now > twoDaysBefore) {
+      throw new Error(
+        'Non puoi più modificare la prenotazione a meno di 48h dal ritiro',
+      );
+    }
+
+    if (dto.pickupDate) resv.pickupDate = new Date(dto.pickupDate);
+    if (dto.pickupLocation)
+      resv.pickupLocation = new Types.ObjectId(dto.pickupLocation);
+    if (dto.dropoffDate) resv.dropoffDate = new Date(dto.dropoffDate);
+    if (dto.dropoffLocation)
+      resv.dropoffLocation = new Types.ObjectId(dto.dropoffLocation);
+
+    if (dto.items) {
+      await Promise.all(
+        resv.items.map((id) =>
+          BikeModel.findByIdAndUpdate(id, { status: 'available' }),
+        ),
+      );
+
+      for (const bikeId of dto.items) {
+        const bike = await BikeModel.findById(bikeId);
+        if (!bike) throw new Error(`Bike non trovata: ${bikeId}`);
+        if (bike.status !== 'available')
+          throw new Error(`Bike ${bikeId} non è disponibile`);
+      }
+
+      await Promise.all(
+        dto.items.map((id) =>
+          BikeModel.findByIdAndUpdate(id, { status: 'rented' }),
+        ),
+      );
+
+      resv.items = dto.items.map((id) => new Types.ObjectId(id));
+    }
+    const origPickup = resv.pickupLocation.toString();
+    const origDropoff = resv.dropoffLocation.toString();
+    const newPickup = dto.pickupLocation || origPickup;
+    const newDropoff = dto.dropoffLocation || origDropoff;
+
+    const isDifferentLoc = newPickup && newDropoff && newPickup !== newDropoff;
+    const newExtraFee = isDifferentLoc ? 10 : 0;
+    resv.extraLocationFee = newExtraFee;
+
+    if (dto.totalPrice !== undefined) {
+      resv.totalPrice = dto.totalPrice + newExtraFee;
+    }
+
+    if (dto.paymentMethod !== undefined) {
+      resv.paymentMethod = dto.paymentMethod;
+    }
+    await resv.save();
+
+    return resv.toObject();
   }
 
   async cancel(reservationId: string, reqUserId: string): Promise<Reservation> {

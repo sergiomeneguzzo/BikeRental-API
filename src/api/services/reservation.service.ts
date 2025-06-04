@@ -18,11 +18,11 @@ export const sendReservationConfirmation = async (
   const mailOptions = {
     from: 'noreply.fifthpocket@gmail.com',
     to: email,
-    subject: 'Conferma Prenotazione - Bike Rental',
+    subject: 'Conferma Prenotazione - Rent Bike',
     attachments: [
       {
         filename: 'LogoPW1.png',
-        path: 'since2024.png',
+        path: 'RentBike.webp',
         cid: 'logo',
       },
     ],
@@ -82,7 +82,7 @@ export const sendReservationConfirmation = async (
     <p><strong>Luogo ritiro:</strong> ${
       typeof reservation.pickupLocation === 'string'
         ? reservation.pickupLocation
-        : reservation.pickupLocation.name
+        : reservation.pickupLocation
     }</p>
     <p><strong>Data riconsegna:</strong> ${new Date(
       reservation.dropoffDate,
@@ -90,15 +90,15 @@ export const sendReservationConfirmation = async (
     <p><strong>Luogo riconsegna:</strong> ${
       typeof reservation.dropoffLocation === 'string'
         ? reservation.dropoffLocation
-        : reservation.dropoffLocation.name
+        : reservation.dropoffLocation
     }</p>
-    <p><strong>Totale:</strong> €${reservation.totalPrice.toFixed(2)}</p>
+    <p><strong>Totale:</strong> €${(reservation.totalPrice || 0).toFixed(2)}</p>
     <p><strong>Metodo di pagamento:</strong> ${
       reservation.paymentMethod || 'Non specificato'
     }</p>
 
     <div class="footer">
-      <p>Grazie per aver scelto FifthPocket!</p>
+      <p>Grazie per aver scelto Rent Bike!</p>
     </div>
   </div>
 </body>

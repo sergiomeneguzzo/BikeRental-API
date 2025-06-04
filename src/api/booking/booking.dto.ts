@@ -57,3 +57,34 @@ export class ConfirmReservationDto {
   @IsMongoId()
   reservationId: string;
 }
+
+export class UpdateReservationDto {
+  @IsOptional()
+  @IsDateString()
+  pickupDate?: string;
+
+  @IsOptional()
+  @IsMongoId()
+  pickupLocation?: string;
+
+  @IsOptional()
+  @IsDateString()
+  dropoffDate?: string;
+
+  @IsOptional()
+  @IsMongoId()
+  dropoffLocation?: string;
+
+  @IsOptional()
+  @ArrayMinSize(1)
+  @IsMongoId({ each: true })
+  items?: string[];
+
+  @IsOptional()
+  @IsNumber()
+  totalPrice?: number;
+
+  @IsOptional()
+  @IsString()
+  paymentMethod?: string;
+}

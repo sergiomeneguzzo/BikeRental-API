@@ -1,16 +1,22 @@
 import { Router } from 'express';
 import { ReservationController } from './booking.controller';
-import { isAuthenticated } from '../../utils/auth/authenticated-middleware';
+import {
+  authorizeRoles,
+  isAuthenticated,
+} from '../../utils/auth/authenticated-middleware';
+import { UserRole } from '../user/user.entity';
 
 const router = Router();
 const controller = new ReservationController();
 
 router.post('/', controller.create);
 
-router.post('/confirm', isAuthenticated, controller.confirm); //middleware
+router.post('/confirm', isAuthenticated, controller.confirm);
 
-router.get('/', isAuthenticated, controller.getAll); //middleware
+router.get('/', isAuthenticated, controller.getAll);
 
-router.delete('/:id', isAuthenticated, controller.cancel); //middleware
+router.put('/cancel/:id', isAuthenticated, controller.cancel);
+
+router.put('/:id', isAuthenticated, controller.update);
 
 export default router;

@@ -15,10 +15,10 @@ export interface Reservation {
   userId?: User | string | Types.ObjectId;
   guestEmail?: string;
   pickupDate: Date;
-  pickupLocation: Location | string;
+  pickupLocation: Location | string | Types.ObjectId;
   dropoffDate: Date;
-  dropoffLocation: Location | string;
-  items: Bike[] | string[];
+  dropoffLocation: Location | string | Types.ObjectId;
+  items: Types.ObjectId[] | string[];
   extraLocationFee: number;
   totalPrice: number;
   status: ReservationStatus;
