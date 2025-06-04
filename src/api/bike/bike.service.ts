@@ -16,8 +16,7 @@ export class BikeService {
     }
 
     const bikeData = {
-      bikeType: createBikeDto.bikeTypeId,
-      //size: createBikeDto.size,
+      bikeType: createBikeDto.bikeType,
       serialNumber: createBikeDto.serialNumber,
       currentLocation: createBikeDto.currentLocationId,
       status: createBikeDto.status || BikeStatus.AVAILABLE,

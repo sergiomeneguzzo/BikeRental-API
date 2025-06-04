@@ -21,7 +21,7 @@ export const sendConfirmationEmail = async (email: string, userId: string) => {
     attachments: [
       {
         filename: 'LogoPW1.png',
-        path: 'since2024.png',
+        //path: 'since2024.png',
         cid: 'logo',
       },
     ],
