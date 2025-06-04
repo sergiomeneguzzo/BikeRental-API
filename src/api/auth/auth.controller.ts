@@ -74,7 +74,7 @@ export const add = async (
 
     const user = {
       ...omit(userDto, 'password', 'confirmPassword'),
-      isConfirmed: true,
+      isConfirmed: false,
       picture: userDto.picture,
     };
 
@@ -82,7 +82,7 @@ export const add = async (
 
     const newUser = await userService.add(user, credentials);
 
-    // sendConfirmationEmail(newUser.username, newUser.id!);
+    sendConfirmationEmail(newUser.username, newUser.id!);
 
     res.send(newUser);
   } catch (e) {
