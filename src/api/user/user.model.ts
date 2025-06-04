@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { User as iUser } from './user.entity';
+import { User as iUser, UserRole } from './user.entity';
 
 export const userSchema = new mongoose.Schema<iUser>({
   firstName: String,
@@ -9,8 +9,8 @@ export const userSchema = new mongoose.Schema<iUser>({
   phone: String,
   role: {
     type: String,
-    enum: ['customer', 'operator'],
-    default: 'customer',
+    enum: Object.values(UserRole), // Usa i valori dell'enum UserRole
+    default: UserRole.CUSTOMER,   // Usa il valore dell'enum per il default
     required: true,
   },
   isConfirmed: { type: Boolean, default: false },

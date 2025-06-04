@@ -11,7 +11,7 @@ import { BikeStatus } from './bike.entity';
 export class CreateBikeDTO {
   @IsNotEmpty()
   @IsMongoId()
-  bikeTypeId: string;
+  bikeType: string;
 
   @IsOptional()
   @IsString()

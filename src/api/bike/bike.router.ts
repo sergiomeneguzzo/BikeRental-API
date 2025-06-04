@@ -18,7 +18,7 @@ const router = express.Router();
 router.post(
   '/',
   isAuthenticated,
-  authorizeRoles(UserRole.OPERATOR), // O UserRole.ADMIN se separato
+  authorizeRoles(UserRole.OPERATOR, UserRole.ADMIN), // O UserRole.ADMIN se separato
   validate(CreateBikeDTO, 'body'),
   createBike,
 );

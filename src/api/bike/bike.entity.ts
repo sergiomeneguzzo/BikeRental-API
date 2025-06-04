@@ -1,4 +1,6 @@
 import { Types } from 'mongoose';
+import { Location } from '../location/location.entity';
+import { BikeType } from '../biketype/biketype.entity';
 
 export enum BikeStatus {
   AVAILABLE = 'available',
@@ -9,7 +11,7 @@ export enum BikeStatus {
 
 export interface Bike {
   id?: string;
-  bikeType: Types.ObjectId | string;
+  bikeType: BikeType | string;
   serialNumber?: string;
   currentLocation: Location | string;
   status: BikeStatus;

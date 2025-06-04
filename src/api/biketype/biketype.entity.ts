@@ -1,4 +1,4 @@
-interface BikeType {
+export interface BikeType {
   category: 'City' | 'Mountain' | 'Gravel' | 'Road';
   motorType: 'Muscolare' | 'Elettrica';
   sizes: {
