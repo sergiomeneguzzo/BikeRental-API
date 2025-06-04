@@ -35,7 +35,7 @@ router.get(
   '/inventory/count', // Endpoint per il conteggio dell'inventario
   isAuthenticated,
   authorizeRoles(UserRole.OPERATOR),
-  //getBikeInventoryCount,
+  getBikeInventoryCount,
 );
 
 router.get(
