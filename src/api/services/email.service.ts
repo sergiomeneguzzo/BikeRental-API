@@ -121,7 +121,7 @@ export const sendConfirmationEmail = async (email: string, userId: string) => {
       <p>Se non hai richiesto questo account, puoi ignorare questa email.</p>
 
       <div class="footer">
-        <p>Grazie,<br />Il Team di FifthPocket</p>
+        <p>Grazie,<br />Il Team di Bike Rental</p>
       </div>
     </div>
   </body>
