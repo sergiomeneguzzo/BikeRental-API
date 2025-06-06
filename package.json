@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "main": "src/index.ts",
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "node dist/index.js",
+    "build": "npx tsc",
     "dev": "nodemon",
-    "build": "tsc",
+    "gendata": "ts-node example-data.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Sergio Meneguzzo",
@@ -26,6 +27,7 @@
     "lodash": "^4.17.21",
     "mongoose": "^8.7.1",
     "morgan": "^1.10.0",
+    "node-cron": "^4.1.0",
     "nodemailer": "^6.9.15",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",

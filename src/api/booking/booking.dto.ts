@@ -7,7 +7,7 @@ import {
   IsOptional,
   IsString,
   ArrayMinSize,
-  ValidateIf,
+  ValidateIf, IsArray,
 } from 'class-validator';
 
 export class CreateReservationDto {
@@ -38,6 +38,14 @@ export class CreateReservationDto {
   @ArrayMinSize(1)
   @IsMongoId({ each: true })
   items: string[];
+
+  @IsOptional()
+  @IsArray()
+  accessories?: string[];
+
+  @IsOptional()
+  @IsArray()
+  insurances?: string[];
 
   @IsOptional()
   @IsNumber()
@@ -79,6 +87,14 @@ export class UpdateReservationDto {
   @ArrayMinSize(1)
   @IsMongoId({ each: true })
   items?: string[];
+
+  @IsOptional()
+  @IsArray()
+  accessories?: string[];
+
+  @IsOptional()
+  @IsArray()
+  insurances?: string[];
 
   @IsOptional()
   @IsNumber()

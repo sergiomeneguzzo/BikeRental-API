@@ -2,24 +2,24 @@ import mongoose, { Schema, Document } from 'mongoose';
 import { Bike as IBike, BikeStatus } from './bike.entity';
 
 export interface BikeDocument extends IBike, Document {
-  id: string; // Sovrascrive _id di Mongoose per coerenza con l'entity
+  id: string;
 }
 
 const bikeSchema = new Schema<BikeDocument>(
   {
     bikeType: {
       type: Schema.Types.ObjectId,
-      ref: 'BikeType', // Nome del modello BikeType
+      ref: 'BikeType',
       required: true,
     },
     serialNumber: {
       type: String,
       unique: true,
-      sparse: true, // Permette valori nulli ma se presente deve essere unico
+      sparse: true,
     },
     currentLocation: {
       type: Schema.Types.ObjectId,
-      ref: 'Location', // Nome del modello Location
+      ref: 'Location',
       required: true,
     },
     status: {
@@ -33,11 +33,11 @@ const bikeSchema = new Schema<BikeDocument>(
     },
   },
   {
-    timestamps: true, // Aggiunge createdAt e updatedAt automaticamente
+    timestamps: true,
     toJSON: {
       virtuals: true,
       transform: (doc, ret) => {
-        ret.id = ret._id; // Mappa _id a id
+        ret.id = ret._id;
         delete ret._id;
         delete ret.__v;
       },
@@ -53,7 +53,6 @@ const bikeSchema = new Schema<BikeDocument>(
   },
 );
 
-// Indici per query comuni
 bikeSchema.index({ currentLocation: 1, bikeType: 1, size: 1, status: 1 });
 bikeSchema.index({ serialNumber: 1 }, { unique: true, sparse: true });
 

@@ -48,7 +48,6 @@ web_modules/
 # TypeScript cache
 *.tsbuildinfo
 
-Hotel-Booking-Backend/.env
 
 # Optional npm cache directory
 .npm

@@ -10,7 +10,7 @@ export const authorizeRoles = (...allowedRoles: UserRole[]) => {
     if (!req.user) {
       return next(new ForbiddenError('User not authenticated.'));
     }
-    const userRole = (req.user as any).role; // Assumendo che 'role' sia sul req.user
+    const userRole = (req.user as any).role;
     if (!allowedRoles.includes(userRole)) {
       return next(new ForbiddenError(`Role ${userRole} is not authorized for this resource.`));
     }

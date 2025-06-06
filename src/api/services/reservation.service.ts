@@ -76,22 +76,26 @@ export const sendReservationConfirmation = async (
     <h1>Prenotazione Confermata</h1>
     <p>Ciao ${user?.firstName || 'ospite'},</p>
     <p>La tua prenotazione è stata confermata con successo!</p>
-    <p><strong>Data ritiro:</strong> ${new Date(
-      reservation.pickupDate,
+   <p><strong>Data ritiro:</strong> ${new Date(
+        reservation.pickupDate
     ).toLocaleString()}</p>
-    <p><strong>Luogo ritiro:</strong> ${
-      typeof reservation.pickupLocation === 'string'
-        ? reservation.pickupLocation
-        : reservation.pickupLocation
+
+<p><strong>Luogo ritiro:</strong> ${
+        typeof reservation.pickupLocation === 'object'
+            ? (reservation.pickupLocation as any).name
+            : reservation.pickupLocation
     }</p>
-    <p><strong>Data riconsegna:</strong> ${new Date(
-      reservation.dropoffDate,
+
+<p><strong>Data riconsegna:</strong> ${new Date(
+        reservation.dropoffDate
     ).toLocaleString()}</p>
-    <p><strong>Luogo riconsegna:</strong> ${
-      typeof reservation.dropoffLocation === 'string'
-        ? reservation.dropoffLocation
-        : reservation.dropoffLocation
+
+<p><strong>Luogo riconsegna:</strong> ${
+        typeof reservation.dropoffLocation === 'object'
+            ? (reservation.dropoffLocation as any).name
+            : reservation.dropoffLocation
     }</p>
+
     <p><strong>Totale:</strong> €${(reservation.totalPrice || 0).toFixed(2)}</p>
     <p><strong>Metodo di pagamento:</strong> ${
       reservation.paymentMethod || 'Non specificato'

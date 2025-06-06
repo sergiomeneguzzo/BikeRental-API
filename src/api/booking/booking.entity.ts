@@ -19,6 +19,8 @@ export interface Reservation {
   dropoffDate: Date;
   dropoffLocation: Location | string | Types.ObjectId;
   items: Types.ObjectId[] | string[];
+  accessories?: Types.ObjectId[] | string[];
+  insurances?: Types.ObjectId[] | string[];
   extraLocationFee: number;
   totalPrice: number;
   status: ReservationStatus;

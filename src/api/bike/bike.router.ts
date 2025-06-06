@@ -1,24 +1,23 @@
 import express from 'express';
-import { validate } from '../../utils/validation-middleware'; // Il tuo middleware di validazione
+import { validate } from '../../utils/validation-middleware';
 import { isAuthenticated, authorizeRoles } from '../../utils/auth/authenticated-middleware';
-import { UserRole } from '../user/user.entity'; // Assumendo che UserRole sia definito qui o in utils/constants
+import { UserRole } from '../user/user.entity';
 import {
   createBike,
   getAllBikes,
   getBikeById,
   updateBike,
   deleteBike,
-  getBikeInventoryCount,
+  getBikeInventoryCount, getBikesByLocation,
 } from './bike.controller';
 import { CreateBikeDTO, UpdateBikeDTO, BikeQueryDTO } from './bike.dto';
 
 const router = express.Router();
 
-// Rotte per Operatori (e Admin se esistesse)
 router.post(
   '/',
   isAuthenticated,
-  authorizeRoles(UserRole.OPERATOR, UserRole.ADMIN), // O UserRole.ADMIN se separato
+  authorizeRoles(UserRole.OPERATOR, UserRole.ADMIN),
   validate(CreateBikeDTO, 'body'),
   createBike,
 );
@@ -27,12 +26,17 @@ router.get(
   '/',
   isAuthenticated,
   authorizeRoles(UserRole.OPERATOR),
-  validate(BikeQueryDTO, 'query'), // La validazione dei query params è più complessa
-  getAllBikes, // La validazione dei query può essere fatta nel controller o con un middleware apposito
+  validate(BikeQueryDTO, 'query'),
+  getAllBikes,
 );
 
 router.get(
-  '/inventory/count', // Endpoint per il conteggio dell'inventario
+    '/location/:locationId',
+    getBikesByLocation,
+);
+
+router.get(
+  '/inventory/count',
   isAuthenticated,
   authorizeRoles(UserRole.OPERATOR),
   getBikeInventoryCount,

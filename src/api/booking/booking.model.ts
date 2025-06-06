@@ -39,6 +39,20 @@ const ReservationSchema = new mongoose.Schema<Reservation>(
         required: true,
       },
     ],
+      accessories: [
+          {
+              type: mongoose.Schema.Types.ObjectId,
+              ref: 'Accessory',
+              required: false,
+          },
+      ],
+      insurances: [
+          {
+              type: mongoose.Schema.Types.ObjectId,
+              ref: 'Insurance',
+              required: false,
+          },
+      ],
     extraLocationFee: {
       type: Number,
       default: 0,

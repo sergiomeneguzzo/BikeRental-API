@@ -9,8 +9,8 @@ export const userSchema = new mongoose.Schema<iUser>({
   phone: String,
   role: {
     type: String,
-    enum: Object.values(UserRole), // Usa i valori dell'enum UserRole
-    default: UserRole.CUSTOMER,   // Usa il valore dell'enum per il default
+    enum: Object.values(UserRole),
+    default: UserRole.CUSTOMER,
     required: true,
   },
   isConfirmed: { type: Boolean, default: false },

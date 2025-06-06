@@ -24,7 +24,7 @@ export class CreateBikeDTO {
 
   @IsOptional()
   @IsEnum(BikeStatus)
-  status?: BikeStatus = BikeStatus.AVAILABLE; // Default se non fornito
+  status?: BikeStatus = BikeStatus.AVAILABLE;
 
   @IsOptional()
   @IsString()
@@ -56,7 +56,7 @@ export class UpdateBikeDTO {
   notes?: string;
 }
 
-export class BikeQueryDTO { // Per filtrare la lista di biciclette
+export class BikeQueryDTO {
   @IsOptional()
   @IsMongoId()
   locationId?: string;
