@@ -40,6 +40,7 @@ Deliver a **complete rental backend system** with:
 
 ## 📂 Project Structure
 
+```
 src/
 ├── api/
 │ ├── accessories/
@@ -61,6 +62,7 @@ src/
 ├── utils/
 ├── app.ts
 ├── index.ts
+```
 
 ---
 
